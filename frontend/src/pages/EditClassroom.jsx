@@ -11,6 +11,43 @@ function EditClassroom({ classroom, onClose, onClassroomUpdated }) {
     });
   };
 
+  const handleUpdate = async () => {
+    const updatedClassroom = {
+      name,
+      capacity,
+      floor,
+      mouse,
+      keyboard,
+      case_status,
+      projector,
+      vga_cable,
+      speaker,
+      operating_system,
+      projector_display,
+      status,
+    };
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/classrooms/${id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedClassroom),
+        }
+      );
+
+      if (response.ok) {
+        alert("Classroom updated successfully");
+        navigate("/"); // Redirect to home after update
+      } else {
+        alert("Failed to update classroom");
+      }
+    } catch (error) {
+      console.error("Error updating classroom:", error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
