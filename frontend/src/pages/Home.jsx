@@ -7,6 +7,7 @@ function Home() {
   const [editingClassroom, setEditingClassroom] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showIssuesOnly, setShowIssuesOnly] = useState(false);
+  const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
 
   const fetchClassrooms = () => {
     fetch("http://localhost:5000/api/classrooms")
@@ -71,6 +72,14 @@ function Home() {
         >
           {showIssuesOnly ? "Show All" : "Show Only Issues"}
         </button>
+
+        {/* Sort Button */}
+        <button
+          className="p-2 rounded bg-blue-500 text-white"
+          onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+        >
+          Sort: {sortOrder === "asc" ? "A → Z" : "Z → A"}
+        </button>
       </div>
 
       <ul className="mt-4">
@@ -80,6 +89,11 @@ function Home() {
               room.name.toLowerCase().includes(searchTerm.toLowerCase())
             )
             .filter((room) => !showIssuesOnly || room.status !== "OK")
+            .sort((a, b) =>
+              sortOrder === "asc"
+                ? a.name.localeCompare(b.name)
+                : b.name.localeCompare(a.name)
+            )
             .map((room) => (
               <li key={room.id} className="p-4 bg-white rounded shadow mb-2">
                 <p className="font-bold">
