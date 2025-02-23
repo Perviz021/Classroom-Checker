@@ -5,6 +5,8 @@ import EditClassroom from "./EditClassroom";
 function Home() {
   const [classrooms, setClassrooms] = useState([]);
   const [editingClassroom, setEditingClassroom] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showIssuesOnly, setShowIssuesOnly] = useState(false);
 
   const fetchClassrooms = () => {
     fetch("http://localhost:5000/api/classrooms")
@@ -50,32 +52,91 @@ function Home() {
         />
       )}
 
+      <div className="flex gap-2 my-4">
+        {/* Search Input */}
+        <input
+          type="text"
+          placeholder="Search by name..."
+          className="p-2 border rounded"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
+        {/* Filter Button */}
+        <button
+          className={`p-2 rounded ${
+            showIssuesOnly ? "bg-red-500 text-white" : "bg-gray-300"
+          }`}
+          onClick={() => setShowIssuesOnly(!showIssuesOnly)}
+        >
+          {showIssuesOnly ? "Show All" : "Show Only Issues"}
+        </button>
+      </div>
+
       <ul className="mt-4">
         {classrooms.length > 0 ? (
-          classrooms.map((room) => (
-            <li key={room.id} className="p-4 bg-white rounded shadow mb-2">
-              <p className="font-bold">
-                {room.name} (Capacity: {room.capacity}, Floor: {room.floor})
-              </p>
-              <p>
-                📅 Last Checked: {new Date(room.checked_at).toLocaleString()}
-              </p>
-              <p>⚠ Status: {room.status || "No Issues"}</p>
+          classrooms
+            .filter((room) =>
+              room.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .filter((room) => !showIssuesOnly || room.status !== "OK")
+            .map((room) => (
+              <li key={room.id} className="p-4 bg-white rounded shadow mb-2">
+                <p className="font-bold">
+                  {room.name} (Capacity: {room.capacity}, Floor: {room.floor})
+                </p>
+                <p>
+                  📅 Last Checked: {new Date(room.checked_at).toLocaleString()}
+                </p>
+                <p>⚠ Status: {room.status || "No Issues"}</p>
 
-              <button
-                className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
-                onClick={() => setEditingClassroom(room)}
-              >
-                Edit
-              </button>
-              <button
-                className="bg-red-500 text-white px-3 py-1 rounded"
-                onClick={() => handleDelete(room.id)}
-              >
-                Delete
-              </button>
-            </li>
-          ))
+                <div className="grid grid-cols-2 gap-2 mt-2 text-sm">
+                  <p>🖱 Mouse: {room.mouse ? "✅ Working" : "❌ Not Working"}</p>
+                  <p>
+                    ⌨ Keyboard:{" "}
+                    {room.keyboard ? "✅ Working" : "❌ Not Working"}
+                  </p>
+                  <p>
+                    💻 Case:{" "}
+                    {room.case_status ? "✅ Working" : "❌ Not Working"}
+                  </p>
+                  <p>
+                    📽 Projector:{" "}
+                    {room.projector ? "✅ Working" : "❌ Not Working"}
+                  </p>
+                  <p>
+                    🔌 VGA Cable:{" "}
+                    {room.vga_cable ? "✅ Connected" : "❌ Missing"}
+                  </p>
+                  <p>
+                    🔊 Speaker: {room.speaker ? "✅ Working" : "❌ Not Working"}
+                  </p>
+                  <p>
+                    🖥 OS:{" "}
+                    {room.operating_system
+                      ? "✅ Installed"
+                      : "❌ Not Installed"}
+                  </p>
+                  <p>
+                    📺 Projector Display:{" "}
+                    {room.projector_display ? "✅ Working" : "❌ Not Working"}
+                  </p>
+                </div>
+
+                <button
+                  className="bg-yellow-500 text-white px-3 py-1 rounded mt-2 mr-2"
+                  onClick={() => setEditingClassroom(room)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="bg-red-500 text-white px-3 py-1 rounded mt-2"
+                  onClick={() => handleDelete(room.id)}
+                >
+                  Delete
+                </button>
+              </li>
+            ))
         ) : (
           <p>Loading classrooms...</p>
         )}
