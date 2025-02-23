@@ -1,26 +1,84 @@
-import { Link } from "react-router-dom";
-
-const classrooms = [
-  { id: 101, name: "Room 101" },
-  { id: 102, name: "Room 102" },
-  { id: 103, name: "Room 103" },
-];
+import { useEffect, useState } from "react";
+import AddClassroom from "./AddClassroom";
+import EditClassroom from "./EditClassroom";
 
 function Home() {
+  const [classrooms, setClassrooms] = useState([]);
+  const [editingClassroom, setEditingClassroom] = useState(null);
+
+  const fetchClassrooms = () => {
+    fetch("http://localhost:5000/api/classrooms")
+      .then((response) => response.json())
+      .then((data) => setClassrooms(data))
+      .catch((error) => console.error("Error fetching classrooms:", error));
+  };
+
+  useEffect(() => {
+    fetchClassrooms();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this classroom?"))
+      return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/classrooms/${id}`,
+        { method: "DELETE" }
+      );
+      if (response.ok) {
+        fetchClassrooms();
+      } else {
+        alert("Failed to delete classroom.");
+      }
+    } catch (error) {
+      console.error("Error deleting classroom:", error);
+    }
+  };
+
   return (
-    <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">Select a Classroom</h2>
-      <ul className="space-y-3">
-        {classrooms.map((room) => (
-          <li key={room.id}>
-            <Link
-              to={`/classroom/${room.id}`}
-              className="block p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            >
-              {room.name}
-            </Link>
-          </li>
-        ))}
+    <div>
+      <h2 className="text-2xl font-bold mb-4">Classrooms</h2>
+
+      <AddClassroom onClassroomAdded={fetchClassrooms} />
+
+      {editingClassroom && (
+        <EditClassroom
+          classroom={editingClassroom}
+          onClose={() => setEditingClassroom(null)}
+          onClassroomUpdated={fetchClassrooms}
+        />
+      )}
+
+      <ul className="mt-4">
+        {classrooms.length > 0 ? (
+          classrooms.map((room) => (
+            <li key={room.id} className="p-4 bg-white rounded shadow mb-2">
+              <p className="font-bold">
+                {room.name} (Capacity: {room.capacity}, Floor: {room.floor})
+              </p>
+              <p>
+                📅 Last Checked: {new Date(room.checked_at).toLocaleString()}
+              </p>
+              <p>⚠ Status: {room.status || "No Issues"}</p>
+
+              <button
+                className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
+                onClick={() => setEditingClassroom(room)}
+              >
+                Edit
+              </button>
+              <button
+                className="bg-red-500 text-white px-3 py-1 rounded"
+                onClick={() => handleDelete(room.id)}
+              >
+                Delete
+              </button>
+            </li>
+          ))
+        ) : (
+          <p>Loading classrooms...</p>
+        )}
       </ul>
     </div>
   );
