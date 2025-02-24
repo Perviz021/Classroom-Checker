@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const API_BASE_URL = "https://classroom-checker-backend.onrender.com/api";
+
 function EditClassroom({ classroom, onClose, onClassroomUpdated }) {
   const [formData, setFormData] = useState({ ...classroom });
 
@@ -28,14 +30,11 @@ function EditClassroom({ classroom, onClose, onClassroomUpdated }) {
     };
 
     try {
-      const response = await fetch(
-        `https://classroom-checker-backend.onrender.com/api/classrooms/${id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedClassroom),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/classrooms/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedClassroom),
+      });
 
       if (response.ok) {
         alert("Classroom updated successfully");
@@ -52,7 +51,7 @@ function EditClassroom({ classroom, onClose, onClassroomUpdated }) {
     e.preventDefault();
     try {
       const response = await fetch(
-        `https://classroom-checker-backend.onrender.com/api/classrooms/${classroom.id}`,
+        `${API_BASE_URL}/classrooms/${classroom.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

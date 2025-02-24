@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const API_BASE_URL = "https://classroom-checker-backend.onrender.com/api";
+
 function AddClassroom({ onClassroomAdded }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -27,14 +29,11 @@ function AddClassroom({ onClassroomAdded }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        "https://classroom-checker-backend.onrender.com/api/classrooms",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/classrooms`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
       if (response.ok) {
         alert("Classroom added successfully!");
         setFormData({

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import AddClassroom from "./AddClassroom";
 import EditClassroom from "./EditClassroom";
 
+const API_BASE_URL = "https://classroom-checker-backend.onrender.com/api";
+
 function Home() {
   const [classrooms, setClassrooms] = useState([]);
   const [editingClassroom, setEditingClassroom] = useState(null);
@@ -10,7 +12,7 @@ function Home() {
   const [sortAscending, setSortAscending] = useState(true);
 
   const fetchClassrooms = () => {
-    fetch("https://classroom-checker-backend.onrender.com/api/classrooms")
+    fetch(`${API_BASE_URL}/classrooms`)
       .then((response) => response.json())
       .then((data) => setClassrooms(data))
       .catch((error) => console.error("Error fetching classrooms:", error));
@@ -26,7 +28,7 @@ function Home() {
 
     try {
       const response = await fetch(
-        `https://classroom-checker-backend.onrender.com/api/classrooms/${id}`,
+        `${API_BASE_URL}/classrooms/${id}`,
         { method: "DELETE" }
       );
       if (response.ok) {
