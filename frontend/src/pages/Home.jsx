@@ -10,7 +10,7 @@ function Home() {
   const [sortAscending, setSortAscending] = useState(true);
 
   const fetchClassrooms = () => {
-    fetch("http://localhost:5000/api/classrooms")
+    fetch("https://classroom-checker-backend.onrender.com/api/classrooms")
       .then((response) => response.json())
       .then((data) => setClassrooms(data))
       .catch((error) => console.error("Error fetching classrooms:", error));
@@ -26,7 +26,7 @@ function Home() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/classrooms/${id}`,
+        `https://classroom-checker-backend.onrender.com/api/classrooms/${id}`,
         { method: "DELETE" }
       );
       if (response.ok) {

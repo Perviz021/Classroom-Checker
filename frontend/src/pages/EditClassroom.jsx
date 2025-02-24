@@ -29,7 +29,7 @@ function EditClassroom({ classroom, onClose, onClassroomUpdated }) {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/classrooms/${id}`,
+        `https://classroom-checker-backend.onrender.com/api/classrooms/${id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -52,7 +52,7 @@ function EditClassroom({ classroom, onClose, onClassroomUpdated }) {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://localhost:5000/api/classrooms/${classroom.id}`,
+        `https://classroom-checker-backend.onrender.com/api/classrooms/${classroom.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
