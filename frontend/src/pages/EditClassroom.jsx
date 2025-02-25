@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-const API_BASE_URL = "https://classroom-checker-backend.onrender.com/api";
+// const API_BASE_URL = "https://classroom-checker-backend.onrender.com/api";
+const API_BASE_URL = "http://localhost:5000/api";
 
 function EditClassroom({ classroom, onClose, onClassroomUpdated }) {
   const [formData, setFormData] = useState({ ...classroom });

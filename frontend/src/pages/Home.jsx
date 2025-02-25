@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import AddClassroom from "./AddClassroom";
 import EditClassroom from "./EditClassroom";
 
-const API_BASE_URL = "https://classroom-checker-backend.onrender.com/api";
+// const API_BASE_URL = "https://classroom-checker-backend.onrender.com/api";
+const API_BASE_URL = "http://localhost:5000/api";
 
 function Home() {
   const [classrooms, setClassrooms] = useState([]);
@@ -27,10 +28,9 @@ function Home() {
       return;
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/classrooms/${id}`,
-        { method: "DELETE" }
-      );
+      const response = await fetch(`${API_BASE_URL}/classrooms/${id}`, {
+        method: "DELETE",
+      });
       if (response.ok) {
         fetchClassrooms();
       } else {
