@@ -3,7 +3,6 @@ import AddClassroom from "./AddClassroom";
 import EditClassroom from "./EditClassroom";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
-// const API_BASE_URL = "http://localhost:5000/api";
 
 function Home() {
   const [classrooms, setClassrooms] = useState([]);
@@ -11,6 +10,11 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showIssuesOnly, setShowIssuesOnly] = useState(false);
   const [sortAscending, setSortAscending] = useState(true);
+  const [selectedIssue, setSelectedIssue] = useState("all"); // New state for issue filtering
+
+  useEffect(() => {
+    console.log(selectedIssue), [selectedIssue];
+  });
 
   const fetchClassrooms = () => {
     fetch(`${API_BASE_URL}/classrooms`)
@@ -21,6 +25,7 @@ function Home() {
 
   useEffect(() => {
     fetchClassrooms();
+    console.log("classrooms ", classrooms);
   }, []);
 
   const handleDelete = async (id) => {
@@ -46,7 +51,8 @@ function Home() {
     .filter(
       (room) =>
         room.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (!showIssuesOnly || room.status.toLowerCase() !== "ok") // Case-insensitive filtering
+        (!showIssuesOnly || room.status.toLowerCase() !== "ok") && // Case-insensitive filtering
+        (selectedIssue === "all" || room[selectedIssue] === 0) // Filter by selected issue
     )
     .sort((a, b) =>
       sortAscending
@@ -67,6 +73,24 @@ function Home() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+
+        {/* Device Issue Filter */}
+        <select
+          className="p-2 border rounded w-full sm:w-auto"
+          value={selectedIssue}
+          onChange={(e) => setSelectedIssue(e.target.value)}
+        >
+          <option value="all">All Devices</option>
+          <option value="mouse">Mouse Issues</option>
+          <option value="keyboard">Keyboard Issues</option>
+          <option value="case_status">Case Issues</option>
+          <option value="projector">Projector Issues</option>
+          <option value="vga_cable">VGA Cable Issues</option>
+          <option value="speaker">Speaker Issues</option>
+          <option value="operating_system">OS Issues</option>
+          <option value="projector_display">Projector Display Issues</option>
+        </select>
+
         <button
           className={`p-2 rounded text-white w-full sm:w-auto ${
             showIssuesOnly ? "bg-red-500" : "bg-gray-500"
@@ -75,6 +99,7 @@ function Home() {
         >
           {showIssuesOnly ? "Show All" : "Show Issues Only"}
         </button>
+
         <button
           className="p-2 bg-blue-500 text-white rounded w-full sm:w-auto"
           onClick={() => setSortAscending(!sortAscending)}
