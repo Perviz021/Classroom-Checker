@@ -1,12 +1,21 @@
 import express from "express";
 import cors from "cors";
-import db from "./db.js"; // ✅ Import the database connection
+import db from "./config/db"; // ✅ Import the database connection
+import adminRoutes from "./routes/adminRoutes.js"; // ✅ Import the admin routes
+import classroomRoutes from "./routes/classrooms.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post("/api/classrooms", async (req, res) => {
+const apiRouter = express.Router();
+
+apiRouter.use("/admin", adminRoutes);
+apiRouter.use("/classrooms", classroomRoutes);
+
+app.use("/api", apiRouter);
+
+app.post("/classrooms", async (req, res) => {
   const {
     name,
     capacity,
@@ -50,7 +59,7 @@ app.post("/api/classrooms", async (req, res) => {
   }
 });
 
-app.get("/api/classrooms", async (req, res) => {
+app.get("/classrooms", async (req, res) => {
   try {
     const [rows] = await db.execute("SELECT * FROM classrooms");
     res.json(rows);
@@ -60,7 +69,7 @@ app.get("/api/classrooms", async (req, res) => {
   }
 });
 
-app.put("/api/classrooms/:id", async (req, res) => {
+app.put("/classrooms/:id", async (req, res) => {
   const { id } = req.params;
   const {
     name,
@@ -111,7 +120,7 @@ app.put("/api/classrooms/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/classrooms/:id", async (req, res) => {
+app.delete("/classrooms/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
