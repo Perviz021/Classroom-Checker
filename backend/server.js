@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import db from "./config/db"; // ✅ Import the database connection
+import db from "./config/db.js"; // ✅ Import the database connection
 import adminRoutes from "./routes/adminRoutes.js"; // ✅ Import the admin routes
 import classroomRoutes from "./routes/classrooms.js";
 
